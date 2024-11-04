@@ -7,24 +7,21 @@ while is_on:
 
     if drink == 'off':
         is_on = False
-
-    if drink == "report":
+    elif drink == "report":
         show_report()
-        continue
-
-    coffee, water, milk, price_in_coins = get_info_drink(drink)
-    if is_enough_ingredients(coffee, water, milk):
-        subtract_ingredients(coffee, water, milk)
-
-        amount_user_coins = ask_coins_and_give_amount_coins()
-        change = get_change(amount_user_coins, price_in_coins)
-        if change:
-            money = change_money(price_in_coins)
-            print(f"Here is your change: {change}")
-            print(f"Here is your {drink} ☕ Enjoy!")
-        else:
-            print("Not enough money! Try again!")
     else:
-        print(f"Not enough ingredients!")
+        coffee, water, milk, price_drink = get_info_drink(drink)
+        if is_enough_ingredients(coffee, water, milk):
+            user_money = process_coins()
+            change = get_change(user_money, price_drink)
+            if change:
+                subtract_ingredients(coffee, water, milk)
+                take_money(price_drink)
+                print(f"Here is your change: {change}")
+                print(f"Here is your {drink} ☕ Enjoy!")
+            else:
+                print("Not enough money! Money refunded! Try again!")
+        else:
+            print(f"Not enough ingredients!")
 
 

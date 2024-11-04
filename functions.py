@@ -1,7 +1,4 @@
-from pip._internal.index import sources
-
 from menu import resources, MENU
-# from main import money
 
 def show_report():
     """Shows all available resources."""
@@ -9,21 +6,21 @@ def show_report():
     milk = resources['milk']
     coffee = resources['coffee']
     money = resources['money']
-    print(f"Water: {water}")
-    print(f"Milk: {milk}")
-    print(f"Coffee: {coffee}")
-    print(f"Money: {money}")
+    print(f"Water: {water}ml")
+    print(f"Milk: {milk}ml")
+    print(f"Coffee: {coffee}g")
+    print(f"Money: ${money}")
 
 
-def ask_coins_and_give_amount_coins():
-    """Asks user type all the coins and returns full amount coins"""
+def process_coins():
+    """Asks user type all the coins and returns full total"""
     print("Please insert coins.")
-    quarters = int(input("How many quarters?: "))
-    dimes = int(input("How many dimes?: "))
-    nickels = int(input("How many nickles?: "))
-    pennies = int(input("How many pennies?: "))
-    total_coins = (quarters * 0.25 + dimes * 0.10 + nickels * 0.05 + pennies * 0.01) * 100
-    return total_coins
+    quarters = int(input("How many quarters?: ")) * 0.25
+    dimes = int(input("How many dimes?: ")) * 0.10
+    nickels = int(input("How many nickles?: ")) * 0.05
+    pennies = int(input("How many pennies?: ")) * 0.01
+    total = quarters + dimes  + nickels + pennies
+    return total
 
 
 def get_info_drink(drink_name):
@@ -31,17 +28,15 @@ def get_info_drink(drink_name):
     coffee = MENU[drink_name]["ingredients"]["coffee"]
     water = MENU[drink_name]["ingredients"]["water"]
     milk = MENU[drink_name]["ingredients"]["milk"]
-    price_in_coins = MENU[drink_name]["cost"] * 100
-    return coffee, water, milk, price_in_coins
+    price_drink = MENU[drink_name]["cost"]
+    return coffee, water, milk, price_drink
 
 
-def get_change(user_coins, price_in_coins):
-    """Takes total coins, converts it into dollars and coin amounts and return a readable string"""
-    if user_coins >= price_in_coins:
-        change = user_coins - price_in_coins
-        dollars_change = int(change // 100)
-        coins_change = int(change % 100)
-        return f"${dollars_change}.{coins_change}"
+def get_change(user_money, drink_price):
+    """Takes user's money, checks if it is enough to buy a coffee"""
+    if user_money >= drink_price:
+        change = user_money - drink_price
+        return f"${change:.2f}"
     return 0
 
 def is_enough_ingredients(coffee, water, milk):
@@ -52,6 +47,7 @@ def is_enough_ingredients(coffee, water, milk):
 
     if res_coffee >= coffee and res_water >= water and res_milk >= milk:
         return True
+
     return False
 
 
@@ -62,11 +58,6 @@ def subtract_ingredients(coffee, water, milk):
     resources["milk"] = resources.get("milk") - milk
 
 
-def change_money(new_coins):
-    """Takes new amount of coins. Calculates them and changes the value in the resource's dictionary ."""
-    money = resources["money"]
-    money = money.lstrip('$')
-    dollars, coins = map(int, money.split('.'))
-    new_dollars = int(new_coins // 100) + dollars
-    new_coins = int(new_coins % 100) + coins
-    resources['money'] = f"${new_dollars}.{new_coins}"
+def take_money(user_money):
+    """Takes user's money and sum it up."""
+    resources['money'] += user_money
